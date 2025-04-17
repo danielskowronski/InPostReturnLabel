@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "InPostReturnLabel"
+version = "0.0.2"
+authors = [
+  { name="Daniel Skowronski" },
+]
+description = "Very simple web-app to generate courier-sized labels with QR code for InPost returns (10-digit codes, usually from Allegro)."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "pillow~=11.2.1",
+    "segno~=1.6.6",
+    "click~=8.1.8",
+]
+
+[project.urls]
+Homepage = "https://github.com/danielskowronski/InPostReturnLabel"
+Issues = "https://github.com/danielskowronski/InPostReturnLabel/issues"
+
+[project.scripts]
+InPostReturnLabel = "InPostReturnLabel.cli:InPostReturnLabel"
