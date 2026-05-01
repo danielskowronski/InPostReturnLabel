@@ -1,0 +1,7 @@
+# ~/.config/InPostReturnLabel/config.yaml
+---
+default_mode: "ipp"  # "cups" or "ipp" or "preview"
+cups_printer_name: "Brother_QL_1110NWB"
+ipp_printer_uri: "ipp://192.168.1.2:631/ipp/print"
+ipp_check_media: "om_brother-label-103x164mm_103x164mm"
+ipp_dpi: 300

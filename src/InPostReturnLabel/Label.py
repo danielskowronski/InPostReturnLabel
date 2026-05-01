@@ -8,11 +8,12 @@ import segno
 
 
 def renderAndSave(code, font_path) -> str:
+    # FIXME: this should be parametrized at this stage instead of resize later
     x = 1000  # 100mm
     y = 1500  # 150mm
 
     y_offset = int(y / 10)
-    fs = x / 9
+    fs = x / 7.6  # 9 for Monaco, 7.6 for Inconsolata
     th = x + y_offset + (y - x) / 2 + -fs / 2
     th = x + y_offset
     scale = x / 25
@@ -28,6 +29,6 @@ def renderAndSave(code, font_path) -> str:
     image_draw = ImageDraw.Draw(image)
     fnt = ImageFont.truetype(font_path, fs)
     image_draw.text((0, th), code_fmt, font=fnt, fill=(0, 0, 0))
-    path = tempfile.mktemp() + ".png"
+    fd, path = tempfile.mkstemp(suffix=".png")
     image.save(path)
     return path
