@@ -40,17 +40,26 @@ pipx install InPostReturnLabel
 Help:
 
 ```
-❯ InPostReturnLabel --help
-Usage: InPostReturnLabel [OPTIONS] CODE
+Usage: InPostReturnLabel [OPTIONS] COMMAND [ARGS]...
 
-  InPostReturnLabel
-
-  CODE is InPost return label code, 10 digits, e.g. 1234567890
+  InPostReturnLabel init.
 
 Options:
-  --version               Show the version and exit.
-  --cfg FILE              Path to configuration file.  [default:
-                          ~/.config/InPostReturnLabel/config.yaml]
+  --version        Show the version and exit.
+  --cfg FILE       Path to configuration file.  [default:
+                   ~/.config/InPostReturnLabel/config.yaml]
+  -v, --verbosity  Increase output verbosity (can be used multiple times).
+  -h, --help       Show this message and exit.
+
+Commands:
+  print  Locally generate and print InPost return label from CODE
+
+
+Usage: InPostReturnLabel print [OPTIONS] CODE
+
+  Locally generate and print InPost return label from CODE
+
+Options:
   -p, --printer TEXT      Local CUPS printer name; if ommited, then file will
                           be opened
   -i, --ipp-printer TEXT  IPP URL for printer; if ommited, then file will be
@@ -58,13 +67,13 @@ Options:
   -m, --check-media TEXT  Enforce loaded media type for IPP printer
   --dpi INTEGER           DPI for IPP printer (likely 203 or 300)
   -f, --font TEXT         Path to font file, default: XXX
-  --help                  Show this message and exit.
+  -h, --help              Show this message and exit.
 ```
 
 Example with legacy (CUPS) mode:
 
 ```
-❯ InPostReturnLabel -f /System/Library/Fonts/Monaco.ttf -p intermec 1234567890
+❯ InPostReturnLabel print -f /System/Library/Fonts/Monaco.ttf -p intermec 1234567890
 Configuration loaded from /Users/daniel/.config/InPostReturnLabel/config.yaml
 Using mode: cups
 Label generated and stored at /var/folders/y0/xhrlswfd40gbzh5m50cbp1fxr3p32g/T/tmp6h4ksy4v.png
@@ -74,6 +83,7 @@ Sending label to intermec
 Example with IPP mode:
 
 ```
+❯ InPostReturnLabel print -i ipp://192.168.1.2:631/ipp/print -m om_brother-label-103x164mm_103x164mm 1234567890
 Configuration loaded from /Users/daniel/.config/InPostReturnLabel/config.yaml
 Using mode: ipp
 Label generated and stored at /var/folders/y0/xhrlswfd40gbzh5m50cbp1fxr3p32g/T/tmpiwvduszj.png

@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 import asyncio
+import logging
 
 import click
 import subprocess
@@ -14,14 +15,16 @@ from InPostReturnLabel.config.schema import Mode
 from InPostReturnLabel.config.load import load_config
 from InPostReturnLabel.ipp import print_ipp
 
+logger = logging.getLogger(__name__)
+
+
 default_font = files("InPostReturnLabel.font").joinpath(
     "Inconsolata-Bold.ttf"
 )  # /System/Library/Fonts/Monaco.ttf
 
 
-@click.command()
+@click.group(context_settings={"help_option_names": ["-h", "--help"]}, invoke_without_command=True)
 @click.version_option(version=__version__, prog_name="InPostReturnLabel")
-@click.argument("code", type=str)
 @click.option(
     "--cfg",
     default="~/.config/InPostReturnLabel/config.yaml",
@@ -29,6 +32,23 @@ default_font = files("InPostReturnLabel.font").joinpath(
     help="Path to configuration file.",
     show_default=True,
 )
+@click.option("--verbosity", "-v", count=True, help="Increase output verbosity (can be used multiple times).")
+@click.pass_context
+def InPostReturnLabel(ctx: click.Context, cfg: str, verbosity: int) -> None:
+  """InPostReturnLabel init."""
+  ctx.ensure_object(dict)
+  ctx.obj["cfg"] = cfg
+  if ctx.invoked_subcommand is None:
+    click.echo(ctx.get_help())
+  click.echo(f"InPostReturnLabel {__version__}")
+  lvl = logging.INFO
+  if verbosity := ctx.params.get("verbosity", 0):
+    if verbosity == 1:
+      lvl = logging.DEBUG
+  logging.basicConfig(level=lvl)
+
+@InPostReturnLabel.command("print", help="Locally generate and print InPost return label from CODE")
+@click.argument("code")
 @click.option(
     "-p",
     "--printer",
@@ -60,11 +80,13 @@ default_font = files("InPostReturnLabel.font").joinpath(
     help=f"Path to font file, default: {default_font}",
     default=default_font,
 )
-def InPostReturnLabel(cfg, code, printer, ipp_printer, check_media, font, dpi):
+@click.pass_context
+def print_code(ctx: click.Context, code: str, printer: str, ipp_printer: str, check_media: str, font: str, dpi: int) -> None:
     """InPostReturnLabel
 
     CODE is InPost return label code, 10 digits, e.g. 1234567890
     """
+    cfg = ctx.obj["cfg"]
     code = code.replace(" ", "")
     if not isCodeValid(code):
         click.echo(f"{code} is not a valid InPost return label code")
