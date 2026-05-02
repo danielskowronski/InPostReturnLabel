@@ -1,13 +1,19 @@
 # SPDX-FileCopyrightText: 2025-present Daniel Skowroński <daniel@skowron.ski>
 #
 # SPDX-License-Identifier: MIT
+from importlib.resources import files
 import io
+import os
 import tempfile
 from PIL import Image, ImageDraw, ImageFont
 import segno
 
+default_font = files("InPostReturnLabel.font").joinpath(
+    "Inconsolata-Bold.ttf"
+)  # /System/Library/Fonts/Monaco.ttf
 
-def renderAndSave(code, font_path) -> str:
+
+def render(code, font_path) -> io.BytesIO:
     # FIXME: this should be parametrized at this stage instead of resize later
     x = 1000  # 100mm
     y = 1500  # 150mm
@@ -29,6 +35,20 @@ def renderAndSave(code, font_path) -> str:
     image_draw = ImageDraw.Draw(image)
     fnt = ImageFont.truetype(font_path, fs)
     image_draw.text((0, th), code_fmt, font=fnt, fill=(0, 0, 0))
+
+    buf = io.BytesIO()
+    image.save(buf, format="PNG")
+    buf.seek(0)
+    return buf
+
+
+def renderAndSave(code, font_path) -> str:
+    bytes_io = render(code, font_path)
+    bytes_io.seek(0)
     fd, path = tempfile.mkstemp(suffix=".png")
-    image.save(path)
+    try:
+        with open(path, "wb") as f:
+            f.write(bytes_io.getvalue())
+    finally:
+        os.close(fd)
     return path

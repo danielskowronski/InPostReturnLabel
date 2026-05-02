@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InPost Return Label</title>
+  <style>
+    html,
+    body,
+    input,
+    button {
+      font-family: monospace;
+      margin: 0;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>InPostReturnLabel v{{ version }}</h1>
+  <form method="post" action="/print" id="labelForm">
+    <label for="print"><b>Print:</b></label>
+    <input type="checkbox" id="print" name="print" checked>
+    <br />
+    <label for="code"><b>&nbsp;Code:</b></label>
+    <input type="text" id="code" name="code" required>
+    <input type="hidden" name="timestamp" value="{{ timestamp }}">
+    <button type="submit">Print Label</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("labelForm");
+    const code = document.getElementById("code");
+    function validateCode() {
+      const value = code.value.trim().replace(/\s/g, "");
+      if (!value) {
+        code.setCustomValidity("Code is required");
+      } else if (!/^[0-9]+$/.test(value)) {
+        code.setCustomValidity("Code must contain only digits");
+      } else if (value.length != 10) {
+        code.setCustomValidity("Code must be exactly 10 digits");
+      } else {
+        code.setCustomValidity("");
+      }
+    }
+    code.addEventListener("input", validateCode);
+    form.addEventListener("submit", (event) => {
+      validateCode();
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        form.reportValidity();
+      }
+    });
+  </script>
+  <br /><br />
+  <hr />
+  <br /><br />
+  Config:
+  <ul>
+    <li>Mode: <b>{{ cfg.default_mode }}</b></li>
+    {% if cfg.default_mode == "cups" %}
+    <li>CUPS Printer: <b>{{ cfg.printer.cups.printer_name }}</b></li>
+    {% elif cfg.default_mode == "ipp" %}
+    <li>IPP Printer: <b>{{ cfg.printer.ipp.printer_uri }}</b></li>
+    <li>Check Media: <b>{{ cfg.printer.ipp.check_media }}</b></li>
+    <li>DPI: <b>{{ cfg.printer.ipp.dpi }}</b></li>
+    {% endif %}
+  </ul>
+</body>
+
+</html>

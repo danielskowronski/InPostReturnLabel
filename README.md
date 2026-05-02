@@ -95,9 +95,25 @@ Printer status after printing:
 {'version': (2, 0), 'status-code': 0, 'request-id': 52544, 'operation-attributes': {'attributes-charset': 'utf-8', 'attributes-natural-language': 'en-US'}, 'unsupported-attributes': [], 'jobs': [], 'printers': [{'printer-state': <IppPrinterState.PROCESSING: 4>, 'printer-state-reasons': 'spool-area-full-report', 'queued-job-count': 1}], 'data': b''}
 ```
 
-### Simple web-app - TBD
+### Simple web-app - in-progress
 
-The goal is to load it on home Docker/k8s and start printing over network.
+It always requires config file, set by env variable `INPOST_RETURN_LABEL_CONFIG`.
+
+Either call buil-in dev Flask server:
+
+```bash
+InPostReturnLabel server
+```
+
+or production server:
+
+```bash
+gunicorn InPostReturnLabel.server:app --bind 0.0.0.0:8090 --workers 2 --threads 2
+```
+
+Docker image and Helm chart will be added soon.
+
+---
 
 ## Technical background
 

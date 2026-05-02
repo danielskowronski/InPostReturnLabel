@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InPost Return Label</title>
+  <style>
+    html,
+    body,
+    input,
+    button {
+      font-family: monospace;
+      margin: 0;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>InPostReturnLabel v{{ version }}</h1>
+  <h1><a href="/">Go home</a></h1>
+  <h2>Generated label:</h2>
+  <img src="data:image/png;base64,{{ img_data }}" alt="Return Label"
+    style="border: 1px solid black; width: 300px; max-width: 100%; height: auto;" />
+  <h2>Print result:</h2>
+  <pre>
+{{ info_text }}
+</pre>
+</body>
+
+</html>

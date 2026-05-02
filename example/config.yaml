@@ -1,6 +1,6 @@
 # ~/.config/InPostReturnLabel/config.yaml
 ---
-cli_default_mode: "ipp"  # "cups" or "ipp" or "preview"
+default_mode: "ipp"  # "cups" or "ipp" or "preview"
 printer:
   cups:
     printer_name: "Brother_QL_1110NWB"
@@ -10,3 +10,8 @@ printer:
     dpi: 300
 template:
   font_path: null
+
+server:
+  debug: false
+  port: 8090
+  bind_address: "0.0.0.0"
