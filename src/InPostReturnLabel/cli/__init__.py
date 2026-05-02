@@ -11,7 +11,7 @@ from InPostReturnLabel.Label import renderAndSave
 from InPostReturnLabel.Code import isCodeValid
 from importlib.resources import files
 from pathlib import Path
-from InPostReturnLabel.config.schema import Mode
+from InPostReturnLabel.config.schema import CliDefaultMode
 from InPostReturnLabel.config.load import load_config
 from InPostReturnLabel.ipp import print_ipp
 
@@ -92,34 +92,34 @@ def print_code(ctx: click.Context, code: str, printer: str, ipp_printer: str, ch
         click.echo(f"{code} is not a valid InPost return label code")
         return
     cfg_path = Path(cfg).expanduser()
-    mode = Mode.PREVIEW
+    mode = CliDefaultMode.PREVIEW
     if printer:
-        mode = Mode.CUPS
+        mode = CliDefaultMode.CUPS
     elif ipp_printer:
-        mode = Mode.IPP
+        mode = CliDefaultMode.IPP
     if cfg_path.is_file():
         _cfg = load_config(cfg_path.absolute().as_posix())
-        if _cfg.default_mode:
+        if _cfg.cli_default_mode:
             if not printer and not ipp_printer:
-                mode = _cfg.default_mode
-        if not printer and _cfg.cups_printer_name:
-            printer = _cfg.cups_printer_name
-        if not ipp_printer and _cfg.ipp_printer_uri:
-            ipp_printer = _cfg.ipp_printer_uri
-        if not font and _cfg.font_path:
-            font = _cfg.font_path
-        if not check_media and _cfg.ipp_check_media:
-            check_media = _cfg.ipp_check_media
-        if not dpi and _cfg.ipp_dpi:
-            dpi = _cfg.ipp_dpi
+                mode = _cfg.cli_default_mode
+        if not printer and _cfg.printer and _cfg.printer.cups and _cfg.printer.cups.printer_name:
+            printer = _cfg.printer.cups.printer_name
+        if not ipp_printer and _cfg.printer and _cfg.printer.ipp and _cfg.printer.ipp.printer_uri:
+            ipp_printer = _cfg.printer.ipp.printer_uri
+        if not font and _cfg.template and _cfg.template.font_path:
+            font = _cfg.template.font_path
+        if not check_media and _cfg.printer and _cfg.printer.ipp and _cfg.printer.ipp.check_media:
+            check_media = _cfg.printer.ipp.check_media
+        if not dpi and _cfg.printer and _cfg.printer.ipp and _cfg.printer.ipp.dpi:
+            dpi = _cfg.printer.ipp.dpi
         click.echo(f"Configuration loaded from {cfg_path}")
     click.echo(f"Using mode: {mode}")
     pathToLabel = renderAndSave(code, font)
     click.echo(f"Label generated and stored at {pathToLabel}")
-    if mode == Mode.CUPS:
+    if mode == CliDefaultMode.CUPS:
         click.echo(f"Sending label to {printer}")
         subprocess.run(["lpr", "-P", printer, pathToLabel])
-    elif mode == Mode.IPP:
+    elif mode == CliDefaultMode.IPP:
         click.echo(f"Sending label to {ipp_printer}")
         asyncio.run(print_ipp(ipp_printer, pathToLabel, code, check_media, dpi))
     else:
